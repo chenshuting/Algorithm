@@ -22,14 +22,12 @@
 
 int main()
 {
-	unsigned char choice = 0;
 	int type = 1;
 
 	print_choice();
 	while(type != 0){
 		printf(">");
-		scanf("%c", &choice);
-		type = choice - '0';
+		scanf("%d", &type);
 		switch(type) {
 			case STRCPY:
 				call_strcpy();
@@ -59,7 +57,7 @@ int main()
 				call_combination();
 				break;
 			case REVERTSTR:
-				call_revert_string;
+				call_revert_string();
 				break;
 			case REVERTWORD:
 				call_revert_word();

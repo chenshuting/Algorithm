@@ -20,6 +20,19 @@
 #include <string.h>
 #include "string_ops.h"
 
+
+void inline print_string(char *str, int length)
+{
+	if (str == NULL || length <= 0)
+		return;
+	
+	int i = 0;
+	for (; i < length; i++) {
+		printf("%c", str[i]);
+	}
+	printf("\n");
+}
+
 /* *
  * copy string from src to dst
  * */
@@ -145,13 +158,14 @@ int cst_strlen(char *str)
  * */
 int cst_atoi(char *str, int radix)
 {
-	int flag = 1, result = 0, tmp;
+	int flag = 1, tmp;
+	unsigned int result = 0;
 	char * pos = str;
 
 	if (str == NULL) {
 		printf("Invalid intput\n");
 		return MAX_INT;
-	} else if (strlen(str) > 10)
+	}
 
 	//neglect empty character from the beginning
 	while(*pos == ' ')
@@ -164,11 +178,6 @@ int cst_atoi(char *str, int radix)
 		pos++;
 	}
 
-	if (strlen(pos) > 10) {
-		printf("number is out of range\n");
-		return MAX_INT;
-	}
-
 	while (*pos != '\0') {
 		tmp = *pos - '0';
 		if (tmp < 0 || tmp > 9) {
@@ -176,48 +185,200 @@ int cst_atoi(char *str, int radix)
 			result = MAX_INT;
 			break;
 		}
+
+		if ((result >> 31) & 0x01 && flag == 1) {
+			printf("Positive number is out of range\n");
+			result = MAX_INT;
+			break;
+		} else if ((result >> 31) & 0x01) {
+			printf("Negtive number is out of range\n");
+			result = MIN_INT;
+			break;
+		}
 		result *= radix;
 		result += tmp;
 		pos++;
 	}
-
-	if ((result >> 31) & 0x01 && flag == 1) {
-		printf("Positive number is out of range\n");
-		result = MAX_INT;
-	} else if ((result >> 31) & 0x01) {
-		printf("Negtive number is out of range\n");
-		result = MIN_INT;
-	}
-	if (flag == -1){
-		result *= flag;
-	}
 	
+
+	result *= flag;
 	return result;	
 }
 
 /* *
- * 
+ * Convert integer to string 
+ * Note:
+ * 	1. negtive or positive number;
+ * 	2. string is enough for convertion
  * */
-char * cst_int2str(int num, char *str, int length)
+char * cst_int2str(int num, int radix, char *str, int length)
 {
-	return NULL;	
+	if (str == NULL || length <= 2)
+	{
+		//Length should reserve size for \0 and sign bit
+		str[0] = '\0';
+		return NULL;
+	}
+	
+	int index = 0, tmp, flag = 0;
+
+	//handle negtive sign
+	if (num < 0) {
+		flag = 1;
+		num = num * -1;
+		str[0] = '-';
+		index = 1;
+	}
+
+	while(num && index < length - 1){
+		tmp = num % radix;
+
+		str[index] = '0' + tmp;
+
+		num /= radix;
+		index++;
+	}
+	
+	if (num != 0) {
+		printf("Sting size is not enough!\n");
+		str[0] = '\0';
+		return NULL;
+	} 
+
+	str[index] = '\0';	
+	revert_string(str, flag, index-1);
+
+	return str;	
 }
+
+int inline check_input_params(char *str, int length){
+	if (str == NULL || length <= 0)
+		return 0;
+	return 1;
+}
+
+/* *
+ * Full permutation of string [str]
+ * */
 void permutation(char *str)
 {
+	if (str == NULL)
+		return;
 	
+	char *begin = str;
+	_permutation(str, begin);
 }
+
 void _permutation(char *str, char *begin)
 {
+	if (*begin == '\0') {
+		printf("Permutation:>%s\n", str);
+		return;
+	}
+
+	char *cptr = begin;
+	char tmp;
+	for (; *cptr != '\0'; cptr++) {
+		tmp = *begin;
+		*begin = *cptr;
+		*cptr = tmp;
+
+		_permutation(str, begin+1);
+
+		tmp = *begin;
+		*begin = *cptr;
+		*cptr = tmp;
+	}
 }
+
+/* *
+ * Full combination of str: [1, length-1]
+ * Principle:
+ * 			
+ * */
 void combination(char *str)
 {
+	if (str == NULL) {
+		return;
+	}
+	int length = cst_strlen(str);
+	int expected = 1, current = 0;
+	char result[length+1];
+	memset(result, '\0', length+1);
+
+	for (; expected < length; expected++) {
+		printf("Expected %d characters\n", expected);
+		_combination(str, result, expected, current);	
+	}
 }
-void _combination(char *str, char *begin, int expected, int current, int length)
+
+void _combination(char *str, char *result, int expected, int current)
 {
+	if (expected == current) {
+		result[expected] = '\0';	
+		printf(">>>>>> %s\n", result);
+		return;
+	} 
+	
+	if (*str == '\0') {
+		return;
+	}
+	
+	//choose this character
+	result[current] = *str;
+	_combination(str+1, result, expected, current+1);
+	
+	result[current] = '\0';
+	//don't choose this character
+	_combination(str+1, result, expected, current);
+
 }
-void revert_string(char *str)
+
+/* *
+ * Revert string from start to end
+ * */
+void revert_string(char *str, int start, int end)
 {
+	int i = start, j = end;
+	char tmp;
+
+	if (str == NULL || start < 0 || end < 0 
+		|| start > end) {
+		printf("Invalid input!\n");
+		return;
+	}
+
+	while(i < j) {
+		tmp = str[i];
+		str[i] = str[j];
+		str[j] = tmp;
+		i++;
+		j--;
+	}
 }
-void revert_word(char *str)
+
+/* *
+ * revert sentence
+ * */
+void revert_word(char *str, int length)
 {
+	if (str == NULL || length <= 0) {
+		printf("Invalid input!\n");
+		return;
+	}
+	
+	revert_string(str, 0, length - 1);
+	
+	int start = 0, end = 0;
+
+	do {
+		if (str[end] == ' ' || str[end] == '\0' || (length - 1) <= 0) {
+			printf("revert:%s, start:%d, end:%d\n", str, start, end);
+			revert_string(str, start, end - 1);
+			start = end + 1;
+		}
+		if (str[end] == '\0')
+			break;
+		end++;
+	} while(1);
 }

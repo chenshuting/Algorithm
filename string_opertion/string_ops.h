@@ -16,9 +16,8 @@
  * =====================================================================================
  */
 
-#define MAX_INT ((0x01 << 31) - 1)
-#define MIN_INT (~0x00)
-
+#define MAX_INT (2147483647)//((0x01 << 31) - 1)
+#define MIN_INT (-2147483647)//(-MAX_INT) 
 /*simulate system function*/
 char *cst_strcpy(char * dst, char *src);
 int cst_strcmp(char *str1, char *str2);
@@ -28,10 +27,10 @@ int cst_strlen(char *str);
 int cst_atoi(char *str, int radix);
 
 /*Complex application*/
-char * cst_int2str(int num, char *str, int length);
+char * cst_int2str(int num, int radix, char *str, int length);
 void permutation(char *str);
 void _permutation(char *str, char *begin);
 void combination(char *str);
-void _combination(char *str, char *begin, int expected, int current, int length);
-void revert_string(char *str);
-void revert_word(char *str);
+void _combination(char *str, char *result, int expected, int current);
+void revert_string(char *str, int start, int end);
+void revert_word(char *str, int length);

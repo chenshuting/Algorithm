@@ -126,37 +126,43 @@ void call_int2str()
 {
 	int num1 = 12345;
 	int num2 = -12345;
-	char string[10];
-	cst_int2str(num1, string, 9);
-	printf("Convert number:[%d] to string[%s]\n", num1, string);
-	cst_int2str(num2, string, 9);
-	printf("Convert number:[%d] to string[%s]\n", num2, string);
+	int num3 = 1234567890;
+	int radix = 10, strlen = 10;
+	char string[strlen];
+	cst_int2str(num1, radix, string, strlen);
+	printf("Convert number:[%d] to string[%d] = %s\n", num1, strlen, string);
+	cst_int2str(num2, radix, string, strlen);
+	printf("Convert number:[%d] to string[%d] = %s\n", num2, strlen, string);
+	cst_int2str(num3, radix, string, strlen);
+	printf("Convert number:[%d] to string[%d] = %s\n", num3, strlen, string);
 }
 void call_permutation()
 {
-	char * string = "abcdefg";	
+	char string[] = "abcd";	
 	printf("Full permutation string: %s\n", string);
 	permutation(string);
 }
 void call_combination()
 {
-	char * string = "abcdefg";	
+	char string[] = "abcd";	
 	printf("Full combination string: %s\n", string);
 	combination(string);
 }
 
 void call_revert_string()
 {
-	char * string = "abcdefg";	
-	printf("Revert string: %s\n", string);
-	revert_string(string);
+	char string[] = "abcdefg";	
+	int length = cst_strlen(string);
+	printf("Revert string: %s with length %d\n", string, length);
+	revert_string(string, 0, length - 1);
 	printf("Revert result: %s\n", string);
 }
 
 void call_revert_word(char *str)
 {
-	char * string = "Hello wolrd";	
+	char string[] = "Hello wolrd";	
+	int length = cst_strlen(string);
 	printf("Revert string: %s\n", string);
-	revert_word(string);
+	revert_word(string, length);
 	printf("Revert result: %s\n", string);
 }
