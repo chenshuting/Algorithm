@@ -29,8 +29,8 @@ Implement heap sort alogrithm.<p>
 <li>int max(int x, int y);</li>
 <li>void print_array(int * array, int length);</li>
 
->>>/* *  
->>> * Description:  
+>/* *  
+> * Description:  
  * 		Simulate dynamic programming to resolve this problem. 
  * Time complexity:O(2^N); Spcae complexity:O(N^2 * SUM)  
  * Three-dimensional defnition:  
